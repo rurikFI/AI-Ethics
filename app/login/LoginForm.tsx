@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export default function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
@@ -31,8 +30,11 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    const nextPath = searchParams.get("next");
+    const safeDestination =
+      nextPath && nextPath.startsWith("/") ? nextPath : "/dashboard";
+
+    window.location.href = safeDestination;
   }
 
   return (
