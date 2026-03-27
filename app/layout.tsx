@@ -11,7 +11,7 @@ export default function RootLayout({
       <body>
         <nav style={{ padding: "20px", display: "flex", gap: "16px" }}>
           <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
+          <Link href="/about">Abot</Link>
           <Link href="/contact">Contact</Link>
         </nav>
         {children}
