@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { signOut } from "@/app/auth/actions";
+import SignOutButton from "@/components/SignOutButton";
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
@@ -15,11 +15,9 @@ export default async function DashboardPage() {
       <h1 className="text-3xl font-semibold">Dashboard</h1>
       <p className="mt-4 text-slate-600">Logged in as: {user.email}</p>
 
-      <form action={signOut} className="mt-8">
-        <button className="rounded-xl border px-4 py-2 font-semibold">
-          Sign out
-        </button>
-      </form>
+      <div className="mt-8">
+        <SignOutButton />
+      </div>
     </main>
   );
 }
