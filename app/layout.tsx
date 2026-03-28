@@ -1,5 +1,5 @@
-import Link from "next/link";
 import "./globals.css";
+import AuthHeader from "@/components/AuthHeader";
 
 export default function RootLayout({
   children,
@@ -9,11 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <nav style={{ padding: "20px", display: "flex", gap: "16px" }}>
-          <Link href="/">Home</Link>
-          <Link href="/about">Abot</Link>
-          <Link href="/contact">Contact</Link>
-        </nav>
+        <AuthHeader />
         {children}
       </body>
     </html>

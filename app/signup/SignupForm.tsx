@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { getSafeRedirectPath } from "@/lib/auth/redirects";
 
-export default function LoginForm() {
-  const searchParams = useSearchParams();
+type SignupFormProps = {
+  nextPath?: string;
+};
 
+export default function SignupForm({ nextPath }: SignupFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,7 +22,7 @@ export default function LoginForm() {
 
     const supabase = createSupabaseBrowserClient();
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -32,34 +33,37 @@ export default function LoginForm() {
       return;
     }
 
-    const nextPath = searchParams.get("next");
     const safeDestination = getSafeRedirectPath(nextPath);
+
+    if (!data.session) {
+      const loginUrl = new URL("/login", window.location.origin);
+      loginUrl.searchParams.set("checkEmail", "1");
+
+      if (safeDestination !== "/dashboard") {
+        loginUrl.searchParams.set("next", safeDestination);
+      }
+
+      window.location.href = loginUrl.toString();
+      return;
+    }
 
     window.location.href = safeDestination;
   }
 
+  const loginHref =
+    nextPath && getSafeRedirectPath(nextPath) !== "/dashboard"
+      ? `/login?next=${encodeURIComponent(getSafeRedirectPath(nextPath))}`
+      : "/login";
+
   return (
     <main className="mx-auto max-w-md px-6 py-16">
-      <h1 className="text-3xl font-semibold">Sign in</h1>
+      <h1 className="text-3xl font-semibold">Create account</h1>
       <p className="mt-3 text-sm text-slate-600">
-        Need an account?{" "}
-        <Link
-          href={
-            searchParams.get("next")
-              ? `/signup?next=${encodeURIComponent(searchParams.get("next")!)}`
-              : "/signup"
-          }
-          className="font-semibold text-slate-900"
-        >
-          Create one
+        Already have an account?{" "}
+        <Link href={loginHref} className="font-semibold text-slate-900">
+          Sign in
         </Link>
       </p>
-
-      {searchParams.get("checkEmail") && (
-        <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
-          Check your email to confirm your account, then sign in.
-        </p>
-      )}
 
       {error && (
         <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
@@ -69,6 +73,7 @@ export default function LoginForm() {
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <input
+          name="email"
           type="email"
           placeholder="Email"
           required
@@ -76,7 +81,9 @@ export default function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-xl border px-4 py-3"
         />
+
         <input
+          name="password"
           type="password"
           placeholder="Password"
           required
@@ -84,12 +91,13 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full rounded-xl border px-4 py-3"
         />
+
         <button
           type="submit"
           disabled={loading}
           className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white disabled:opacity-60"
         >
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? "Creating account..." : "Sign up"}
         </button>
       </form>
     </main>
