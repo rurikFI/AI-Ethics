@@ -33,7 +33,7 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-xl bg-slate-900" />
               <span className="text-sm font-semibold tracking-tight">
-                BLUEBELL ETHICAL
+                Bluebell AI Governance
               </span>
             </div>
 
@@ -57,11 +57,11 @@ export default function Home() {
               </div>
 
               <h1 className="mt-8 max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl">
-                Bluebell Baby
+                Bluebell AI Governance
               </h1>
 
               <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-                Använd AI med mindre risk, mindre tvekan och mindre intern röra.
+                Practical AI governance for Nordic SMEs.
               </p>
 
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
