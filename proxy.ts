@@ -26,13 +26,25 @@ export async function proxy(req: NextRequest) {
     }
   );
 
-  const { data } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!data.user) {
+  if (!user) {
     const url = req.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", req.nextUrl.pathname);
-    return NextResponse.redirect(url);
+
+    const redirectResponse = NextResponse.redirect(url);
+
+    req.cookies
+      .getAll()
+      .filter(({ name }) => name.startsWith("sb-"))
+      .forEach(({ name }) => {
+        redirectResponse.cookies.delete(name);
+      });
+
+    return redirectResponse;
   }
 
   return res;
